@@ -2,12 +2,11 @@ MYSQL_IMAGE = "mysql:8.0.32"
 ROOT_DEFAULT_PASSWORD = "root"
 MYSQL_DEFAULT_PORT = 3036
 
-def create_database(plan, database_name, database_user, database_password, seed_script_artifacts = []):
+def create_database(plan, database_name, database_user, database_password, seed_script_artifact = None):
     files = {}
-    # We "rename" these files to 1.sql, 2.sql, etc. to guarantee the execution to match the one on the list
     # Given that scripts on /docker-entrypoint-initdb.d/ are executed sorted by filename
-    for index, artifact in enumerate(seed_script_artifacts):
-        files["/docker-entrypoint-initdb.d/{}.sql".format(index)] = artifact
+    if seed_script_artifact != None:
+        files["/docker-entrypoint-initdb.d"] = seed_script_artifact
     service_name = "mysql-{}".format(database_name)
     mysql_service = plan.add_service(
         service_name = service_name,
