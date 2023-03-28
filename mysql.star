@@ -9,7 +9,7 @@ def create_database(plan, database_name, database_user, database_password, seed_
         files["/docker-entrypoint-initdb.d"] = seed_script_artifact
     service_name = "mysql-{}".format(database_name)
     mysql_service = plan.add_service(
-        service_name = service_name,
+        name = service_name,
         config = ServiceConfig(
             image = MYSQL_IMAGE,
             ports = {
