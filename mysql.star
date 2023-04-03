@@ -51,6 +51,6 @@ def run_sql(plan, database, sql_query):
         recipe = ExecRecipe(command = ["sh", "-c", "mysql -u {} -p{} -e '{}' {}".format(database.user, database.password, sql_query, database.name)]),
         field = "code",
         assertion = "==",
-        target_vaue = 0
+        target_value = 0
     )
     return exec_result["output"]
