@@ -46,8 +46,11 @@ def create_database(plan, database_name, database_user, database_password, seed_
 
 
 def run_sql(plan, database, sql_query):
-    exec_result = plan.exec(
+    exec_result = plan.wait(
         service_name = database.service.name,
         recipe = ExecRecipe(command = ["sh", "-c", "mysql -u {} -p{} -e '{}' {}".format(database.user, database.password, sql_query, database.name)]),
+        field = "code",
+        assertion = "==",
+        target_vaue = 0
     )
     return exec_result["output"]
