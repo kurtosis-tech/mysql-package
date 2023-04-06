@@ -37,6 +37,19 @@ def create_database(plan, database_name, database_user, database_password, seed_
         target_value = 0,
         timeout = "30s",
     )
+
+    # test a generic query works
+    test_query = "show tables"
+    plan.wait(
+        service_name = service_name,
+        recipe = ExecRecipe(command = ["sh", "-c", "mysql -u {} -p{} -e '{}' {}".format(database_user, database_password, test_query, database_name)]),
+        field = "code",
+        assertion = "==",
+        target_value = 0,
+        timeout = "30s",
+    )
+
+
     return struct(
         service=mysql_service,
         name=database_name,
