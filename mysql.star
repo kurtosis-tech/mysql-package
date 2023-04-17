@@ -26,12 +26,15 @@ def create_database(plan, database_name, database_user, database_password, seed_
                 "MYSQL_USER": database_user,
                 "MYSQL_PASSWORD":  database_password,
             },
+            # Conditions that, when satisifed, confirm that a service is ready to receive connections and traffic after its been started (defined later)
+            ready_conditions = ReadyCondition,
         )
     )
-    # Wait for MySQL to become available
-    plan.wait(
-        service_name = service_name,
-        recipe = ExecRecipe(command = ["mysql", "-u", database_user, "-p{}".format(database_password), database_name]),
+    # Define the readiness conditions 
+    ready_conditions = ReadyCondition(
+        recipe = ExecRecipe(
+            command = ["mysql", "-u", database_user, "-p{}".format(database_password), database_name]
+            ),
         field = "code",
         assertion = "==",
         target_value = 0,
