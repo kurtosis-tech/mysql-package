@@ -12,7 +12,7 @@ def create_database(plan, database_name, database_user, database_password, seed_
     database_ready_condition = ReadyCondition(
         recipe = ExecRecipe(
             command = ["mysql", "-u", database_user, "-p{}".format(database_password), database_name]
-            ),
+        ),
         field = "code",
         assertion = "==",
         target_value = 0,
