@@ -39,8 +39,8 @@ def create_database(plan, database_name, database_user, database_password, seed_
                 "MYSQL_PASSWORD":  database_password,
             },
             ready_conditions = database_ready_condition,
-            ),
-        )
+        ),
+    )
 
     # test a generic query works
     test_query = "show tables"
