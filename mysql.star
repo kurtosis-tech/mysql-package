@@ -7,6 +7,18 @@ def create_database(plan, database_name, database_user, database_password, seed_
     # Given that scripts on /docker-entrypoint-initdb.d/ are executed sorted by filename
     if seed_script_artifact != None:
         files["/docker-entrypoint-initdb.d"] = seed_script_artifact
+
+    # Define readiness condition
+    database_ready_condition = ReadyCondition(
+        recipe = ExecRecipe(
+            command = ["mysql", "-u", database_user, "-p{}".format(database_password), database_name]
+            ),
+        field = "code",
+        assertion = "==",
+        target_value = 0,
+        timeout = "30s",
+    )
+    
     service_name = "mysql-{}".format(database_name)
     mysql_service = plan.add_service(
         name = service_name,
@@ -26,20 +38,9 @@ def create_database(plan, database_name, database_user, database_password, seed_
                 "MYSQL_USER": database_user,
                 "MYSQL_PASSWORD":  database_password,
             },
-            # Conditions that, when satisifed, confirm that a service is ready to receive connections and traffic after its been started (defined later)
-            ready_conditions = ReadyCondition,
-        )
-    )
-    # Define the readiness conditions 
-    ready_conditions = ReadyCondition(
-        recipe = ExecRecipe(
-            command = ["mysql", "-u", database_user, "-p{}".format(database_password), database_name]
+            ready_conditions = database_ready_condition,
             ),
-        field = "code",
-        assertion = "==",
-        target_value = 0,
-        timeout = "30s",
-    )
+        )
 
     # test a generic query works
     test_query = "show tables"
