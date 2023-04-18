@@ -8,8 +8,8 @@ def create_database(plan, database_name, database_user, database_password, seed_
     if seed_script_artifact != None:
         files["/docker-entrypoint-initdb.d"] = seed_script_artifact
 
-    # Define readiness condition
-    database_ready_condition = ReadyCondition(
+    # Define a readiness check for your database to ensure the service is ready to receive traffic and connections after starting
+    db_ready_check = ReadyCondition(
         recipe = ExecRecipe(
             command = ["mysql", "-u", database_user, "-p{}".format(database_password), database_name]
         ),
@@ -19,9 +19,14 @@ def create_database(plan, database_name, database_user, database_password, seed_
         timeout = "30s",
     )
     
+    # Name your service 
     service_name = "mysql-{}".format(database_name)
+    
+    # Add MySQL service
     mysql_service = plan.add_service(
         name = service_name,
+        
+        # Define service configs
         config = ServiceConfig(
             image = MYSQL_IMAGE,
             ports = {
@@ -38,7 +43,7 @@ def create_database(plan, database_name, database_user, database_password, seed_
                 "MYSQL_USER": database_user,
                 "MYSQL_PASSWORD":  database_password,
             },
-            ready_conditions = database_ready_condition,
+            ready_conditions = db_ready_check,
         ),
     )
 
