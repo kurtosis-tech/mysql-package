@@ -1,6 +1,8 @@
 MYSQL_IMAGE = "mysql:8.0.32"
 ROOT_DEFAULT_PASSWORD = "root"
 MYSQL_DEFAULT_PORT = 3036
+MYSQL_PORT_WAIT_TIMEOUT = "2m"
+MYSQL_PORT_WAIT_DISABLED = None
 
 def create_database(plan, database_name, database_user, database_password, seed_script_artifact = None):
     files = {}
@@ -34,6 +36,7 @@ def create_database(plan, database_name, database_user, database_password, seed_
                     number = MYSQL_DEFAULT_PORT,
                     transport_protocol = "TCP",
                     application_protocol = "http",
+                    wait = MYSQL_PORT_WAIT_DISABLED,
                 ),
             },
             files = files,
